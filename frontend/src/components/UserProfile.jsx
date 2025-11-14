@@ -30,7 +30,7 @@ const [forceAlert, setForceAlert] = useState(false)
       setLoading(true)
       const deviceId = localStorage.getItem("device_id");
       const token = localStorage.getItem("access_token");
-      const res = await fetch("http://localhost:5000/session/force-logout", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/session/force-logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +59,9 @@ const [forceAlert, setForceAlert] = useState(false)
   }
 
   const handleCancel = () => {
-    console.log('User clicked No')
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("device_id");
+    router.push('/');
     setIsOpen(false)
   }
 
@@ -70,7 +72,7 @@ const [forceAlert, setForceAlert] = useState(false)
       phone: user.phone,
     }
   try {
-    const res = await fetch("http://localhost:5000/user/update-profile", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/update-profile`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +89,6 @@ const [forceAlert, setForceAlert] = useState(false)
     const data = await res.json();
     console.log("Profile updated:", data);
 
-    // Optionally update user state
     setUser(data.user);
     setAlert('success', "Profile updated successfully! ");
   } catch (err) {
@@ -101,7 +102,7 @@ const [forceAlert, setForceAlert] = useState(false)
 
   const handleSignOut = async() => {
     try {
-    const res = await fetch("http://localhost:5000/session/logout", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/session/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -170,7 +171,7 @@ const [forceAlert, setForceAlert] = useState(false)
   setLoading(true); // start loading
   try {
     const deviceId = getDeviceId();
-    const res = await fetch(`http://localhost:5000/user/verify-code?code=${code}&deviceid=${deviceId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/verify-code?code=${code}&deviceid=${deviceId}`, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
@@ -217,7 +218,7 @@ const getUserProfile = async () => {
   try {
     const token = localStorage.getItem("access_token");
     const deviceId = getDeviceId();
-    const res = await fetch(`http://localhost:5000/user/profile-details?deviceid=${deviceId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user/profile-details?deviceid=${deviceId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

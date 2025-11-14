@@ -19,35 +19,15 @@ export const Button = ({ variant = "default", size = "default", children, classN
     "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
 
   const buttonClass = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`
-//   const login = async () => {
-//     const domain = "dev-fcepv4jphzal67g7.us.auth0.com";
-//     const audience = "https://n-device-api/";
-//     const scope = "read:details";
-//     const clientId = "sWhhGDOzdBaINnywlcjS2iL8Ur7GhUt1";
-//     const responseType = "code";
-//     const redirectUri = "http://localhost:3000/user";
 
-//     const response = await fetch(
-//       `https://${domain}/authorize?` + 
-//       `audience=${audience}&` + 
-//       `scope=${scope}&` +
-//       `response_type=${responseType}&` +
-//       `client_id=${clientId}&` +
-//       `redirect_uri=${redirectUri}`, {
-//         redirect: "manual"
-//       }
-//     );
-//     console.log(response);
-//     window.location.replace(response.url);
-//   };
 
 const login = () => {
-  const domain = "dev-fcepv4jphzal67g7.us.auth0.com";
-  const audience = "https://n-device-api/";
-  const scope = "openid profile email read:details";
-  const clientId = "sWhhGDOzdBaINnywlcjS2iL8Ur7GhUt1";
+  const domain = process.env.NEXT_PUBLIC_DOMAIN;
+  const audience = process.env.NEXT_PUBLIC_AUDIENCE;
+  const scope = process.env.NEXT_PUBLIC_SCOPE;
+  const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
   const responseType = "code";
-  const redirectUri = "http://localhost:3000/user";
+  const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
   const authUrl = `https://${domain}/authorize?` +
     `audience=${encodeURIComponent(audience)}&` +
@@ -56,7 +36,7 @@ const login = () => {
     `client_id=${clientId}&` +
     `redirect_uri=${encodeURIComponent(redirectUri)}`;
 
-  // 👇 Redirect browser to Auth0
+
   window.location.href = authUrl;
 };
 
