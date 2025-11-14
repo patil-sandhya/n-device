@@ -3,7 +3,6 @@ const jwksClient  = require("jwks-rsa");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-console.log("Auth0 Domain:", process.env.JWKS_URI, process.env.AUTH0_AUDIENCE);
 
 const client = jwksClient({
   jwksUri: process.env.JWKS_URI,
@@ -49,21 +48,21 @@ function verifyAccessToken(token, expectedAudience) {
 
 const requireAuth  = async(req, res, next) => {
    const authHeader = req.headers.authorization;
-console.log("Auth0 Domain:", process.env.JWKS_URI, process.env.AUTH0_AUDIENCE);
+// console.log("Auth0 Domain:", process.env.JWKS_URI, process.env.AUTH0_AUDIENCE);
   if (!authHeader) return res.status(401).send("Missing Authorization header");
 
   const token = authHeader.split(" ")[1];
 
   const header = JSON.parse(Buffer.from(token.split('.')[0], 'base64').toString());
-console.log("Token header:", header);
+// console.log("Token header:", header);
 
   try {
     const decoded = await verifyAccessToken(token, process.env.AUTH0_AUDIENCE);
-    console.log("Decoded token:", decoded);
+    // console.log("Decoded token:", decoded);
     req.user = decoded;
     next();
   } catch (err) {
-    console.log("Token verification error:", err);
+    // console.log("Token verification error:", err);
     res.status(401).send("Invalid or expired token");
   }
 }

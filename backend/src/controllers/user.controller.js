@@ -91,8 +91,8 @@ const verifyCode = async (req, res) => {
       lastActive: new Date(),
     });
 
-    console.log("Decoded ID token:", decoded, deviceId);
-    console.log(req.oauth);
+    // console.log("Decoded ID token:", decoded, deviceId);
+    // console.log(req.oauth);
     return res.status(200).json({
       status: "success",
       message: "Login verified and session created.",

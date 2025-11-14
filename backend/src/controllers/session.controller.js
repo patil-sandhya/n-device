@@ -41,26 +41,11 @@ const loginSession = async (req, res) => {
     const session = await Session.create({ userId, deviceId, userAgent, ipAddress });
     return res.status(201).json({ message: "Login successful", session });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-const listSessions = async (req, res) => {
-  try {
-    const userId = req.auth.sub; // Auth0 user ID
-
-    // Fetch all active sessions for this user
-    const activeSessions = await Session.find({ userId, isActive: true }).sort({ createdAt: -1 });
-
-    return res.status(200).json({
-      sessions: activeSessions
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
 
 const logoutSession = async (req, res) => {
   try {
@@ -87,7 +72,7 @@ const logoutSession = async (req, res) => {
 
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -137,42 +122,15 @@ const forceLogoutSession = async (req, res) => {
         activeSessions,
      });
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     return res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-const validateSession = async (req, res) => {
-  try {
-    const userId = req.auth.sub; // Auth0 user ID
-    const { deviceId } = req.body; // Current device ID
-
-    if (!deviceId) {
-      return res.status(400).json({ message: "deviceId is required" });
-    }
-
-    // Check if the session exists and is active
-    const session = await Session.findOne({ userId, deviceId, isActive: true });
-
-    if (!session) {
-      return res.status(401).json({
-        valid: false,
-        message: "You were logged out due to login from another device."
-      });
-    }
-
-    return res.status(200).json({ valid: true, session });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
 
 
 module.exports = {
   loginSession,
-  listSessions,
   logoutSession,
   forceLogoutSession,
-  validateSession
 };
