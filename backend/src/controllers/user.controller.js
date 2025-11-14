@@ -139,11 +139,20 @@ const updateProfile = async (req, res) => {
 const getProfileDetails = async (req, res) => {
   try {
       const userId = req.user.sub;
+       var deviceId = req.query.deviceid;
       let user = await User.findOne({ sub: userId });
       if (!user) {
           return res.status(404).json({ message: "User not found" });
       }
 
+      const sessions = await Session.find({ userId: user._id, deviceId });
+
+      if(sessions.revokedReason === "ForceLogout"){
+        return res.status(403).json({ 
+         status: "force_logged_out",
+          message: "Session has been forcefully logged out" });
+
+      }
        const activeSessions = await Session.find({
       userId: user._id,
       isActive: true,
