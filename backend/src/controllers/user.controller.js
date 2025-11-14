@@ -39,6 +39,14 @@ const verifyCode = async (req, res) => {
       (s) => s.deviceId === deviceId
     );
 
+    // turminate req if existing session is forcefully logged out
+    if (existingSession && existingSession.revokedReason === "ForceLogout") {
+      return res.status(403).json({
+        status: "force_logged_out",
+        message: "This session has been forcefully logged out. Please contact support.",
+      });
+    }
+
      if (existingSession) {
       // update last active
       existingSession.lastActive = new Date();
@@ -144,10 +152,16 @@ const getProfileDetails = async (req, res) => {
       if (!user) {
           return res.status(404).json({ message: "User not found" });
       }
+      const checkActiveSession = await Session.findOne({ userId: user._id, deviceId });
+      if (!checkActiveSession) {
+        return res.status(403).json({ 
+         status: "logged_out",
+          message: "No active session found for this device. Please log in again." });
+      }
 
       const sessions = await Session.find({ userId: user._id, deviceId });
-
-      if(sessions.revokedReason === "ForceLogout"){
+      
+      if(checkActiveSession.revokedReason === "ForceLogout"){
         return res.status(403).json({ 
          status: "force_logged_out",
           message: "Session has been forcefully logged out" });

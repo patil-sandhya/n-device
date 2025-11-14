@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { v4 as uuidv4 } from "uuid";
 import { useAlert } from "@/app/context/AlertContext";
 import { ConfirmationBox } from "./Confirmation";
+import { ForceLogoutAlert } from "./ForceLogoutAlert";
 
 export default function UserProfile() {
   const [user, setUser] = useState({
@@ -23,7 +24,7 @@ const searchParams = useSearchParams();
 const [errors, setErrors] = useState({});
 const router = useRouter()
  const [isOpen, setIsOpen] = useState(false)
-
+const [forceAlert, setForceAlert] = useState(false)
   const handleConfirm = async() => {
     try {
       setLoading(true)
@@ -180,12 +181,19 @@ const router = useRouter()
     const data = await res.json();
     console.log("verify code res", data);
 
+     if (res.status === 403 && data.status === "force_logged_out") {
+    setForceAlert(true);
+    return;
+  }
+
      if (res.status === 409 && data.status === "max_sessions") {
     setIsOpen(true)
     localStorage.setItem("access_token", data.accessToken);
     setAccessToken(data.accessToken);
     return;
   }
+
+
 
     if (!res.ok) {
       throw new Error("Failed to verify code");
@@ -216,10 +224,17 @@ const getUserProfile = async () => {
         "Authorization": `Bearer ${token}`, 
       },
     });
+    const data = await res.json();
+
+     if (res.status === 403 && data.status === "force_logged_out") {
+    setForceAlert(true);
+    return;
+  }
+
     if (!res.ok) {
       throw new Error("Failed to fetch user profile");
     }
-    const data = await res.json();
+    
     setUser(data.user);
     setActiveSessions(data?.activeSessions?.length || 0);
   } catch (err) {
@@ -248,6 +263,9 @@ const getUserProfile = async () => {
         isOpen={isOpen}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+      <ForceLogoutAlert 
+      isOpen={forceAlert}
       />
       {loading ? (
         <div className="flex items-center justify-center">

@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export function ForceLogoutAlert() {
-  const [isOpen, setIsOpen] = useState(true);
+export function ForceLogoutAlert({
+    isOpen
+}) {
   const router = useRouter();
 
   const handleOk = () => {
-    setIsOpen(false);
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("device_id");
     router.push('/');
   };
 
@@ -17,8 +19,8 @@ export function ForceLogoutAlert() {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-card border border-border rounded-lg shadow-lg max-w-sm w-full p-6 space-y-4">
-        <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/30">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="flex flex items-center justify-center h-10 w-10 rounded-full bg-red-100 dark:bg-red-900/30">
             <svg
               className="h-6 w-6 text-red-600 dark:text-red-500"
               fill="none"

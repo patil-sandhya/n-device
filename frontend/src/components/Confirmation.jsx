@@ -13,14 +13,15 @@ export function ConfirmationBox({
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
-            Confirm Action
+            Maximum Devices Reached
           </h2>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-4">
+        <div className="px-6 py-6">
           <p className="text-gray-600 text-sm leading-relaxed">
-            Are you sure you want to proceed?
+           
+Do you want to log out one of your previous devices to continue?
           </p>
         </div>
 
@@ -30,13 +31,13 @@ export function ConfirmationBox({
             onClick={onCancel}
             className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm"
           >
-            No
+           Cancel Login
           </button>
           <button
             onClick={onConfirm}
             className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors font-medium text-sm"
           >
-            Yes
+            Log Out Previous Device
           </button>
         </div>
       </div>
