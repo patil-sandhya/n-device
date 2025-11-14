@@ -64,6 +64,7 @@ const verifyCode = async (req, res) => {
       return res.status(409).json({
         status: "max_sessions",
         message: "You have reached the maximum number of allowed devices.",
+        accessToken: req.oauth.access_token,
         activeSessions: activeSessions.map((s) => ({
           deviceId: s.deviceId,
           loginTime: s.loginTime,

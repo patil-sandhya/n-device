@@ -94,15 +94,14 @@ const logoutSession = async (req, res) => {
 
 const forceLogoutSession = async (req, res) => {
   try {
-    const userId = req.auth.sub; // Auth0 user ID
-    const { sessionId } = req.params; // ID of the session to force logout
+    const userId = req.user.sub; 
+   const { deviceId } = req.body;
+    let user = await User.findOne({ sub: userId });
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
 
-    if (!sessionId) {
-      return res.status(400).json({ message: "sessionId is required" });
-    }
-
-    // Find the target session
-    const targetSession = await Session.findOne({ _id: sessionId, userId, isActive: true });
+    const targetSession = await Session.findOne({ userId:user._id,  isActive: true });
 
     if (!targetSession) {
       return res.status(404).json({ message: "Session not found or already inactive" });
@@ -113,7 +112,30 @@ const forceLogoutSession = async (req, res) => {
     targetSession.revokedReason = "ForceLogout";
     await targetSession.save();
 
-    return res.status(200).json({ message: "Session force logged out successfully", session: targetSession });
+     const newSession = await Session.create({
+          userId: user._id,
+          deviceId,
+          // ip: req.ip,
+          isActive: true,
+          loginTime: new Date(),
+          lastActive: new Date(),
+        });
+
+    const activeSessions = await Session.find({
+      userId: user._id,
+      isActive: true,
+    });
+
+    
+
+    return res.status(200).json({ message: "Session force logged out successfully",
+      user: {
+          name: user.fullName,
+          email: user.email,
+          phone: user.phone || null,
+        },
+        activeSessions,
+     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error", error: err.message });

@@ -12,7 +12,7 @@ const { requireAuth  } = require("../middleware/auth");
 router.post("/login", requireAuth , loginSession);
 router.get("/list", requireAuth , listSessions);
 router.post("/logout", requireAuth , logoutSession);
-router.post("/force-logout/:sessionId", requireAuth , forceLogoutSession);
+router.post("/force-logout", requireAuth , forceLogoutSession);
 router.get("/validate", requireAuth , validateSession);
 
 module.exports = router;
