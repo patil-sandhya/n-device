@@ -1,6 +1,8 @@
 var axios = require("axios");
+require("dotenv").config();
+
 // generate the access token
-const tokenEndpoint = "https://dev-fcepv4jphzal67g7.us.auth0.com/oauth/token";
+const tokenEndpoint = process.env.TOKEN_ENDPOINT;
 
 const oAuth = (req, res, next) => {
   var code = req.query.code;
@@ -14,7 +16,7 @@ const oAuth = (req, res, next) => {
   params.append("client_id", process.env.CLIENT_ID);
   params.append("client_secret", process.env.CLIENT_SECRET);
   params.append("code", code);
-  params.append("redirect_uri", "http://localhost:3000/user");
+  params.append("redirect_uri", process.env.REDIRECT_URI);
 
   axios.post(tokenEndpoint, params)
   .then(response => {

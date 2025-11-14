@@ -1,23 +1,12 @@
 const { expressjwt } = require("express-jwt");
 const jwksClient  = require("jwks-rsa");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-
-// const checkJwt = expressjwt({
-//   secret: jwksRsa.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
-//   }),
-//   audience: process.env.AUTH0_AUDIENCE,
-//   issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-//   algorithms: ["RS256"],
-// });
-
+console.log("Auth0 Domain:", process.env.JWKS_URI, process.env.AUTH0_AUDIENCE);
 
 const client = jwksClient({
-  jwksUri: `https://dev-fcepv4jphzal67g7.us.auth0.com/.well-known/jwks.json`,
+  jwksUri: process.env.JWKS_URI,
    cache: true,             // optional, speeds up repeated verifications
   cacheMaxEntries: 5,      // optional
   cacheMaxAge: 600000 
@@ -60,7 +49,7 @@ function verifyAccessToken(token, expectedAudience) {
 
 const requireAuth  = async(req, res, next) => {
    const authHeader = req.headers.authorization;
-
+console.log("Auth0 Domain:", process.env.JWKS_URI, process.env.AUTH0_AUDIENCE);
   if (!authHeader) return res.status(401).send("Missing Authorization header");
 
   const token = authHeader.split(" ")[1];
@@ -69,7 +58,7 @@ const requireAuth  = async(req, res, next) => {
 console.log("Token header:", header);
 
   try {
-    const decoded = await verifyAccessToken(token, "https://n-device-api/");
+    const decoded = await verifyAccessToken(token, process.env.AUTH0_AUDIENCE);
     console.log("Decoded token:", decoded);
     req.user = decoded;
     next();

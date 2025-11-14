@@ -1,8 +1,6 @@
 "use client";
 import Home from '@/components/Homepage';
-import LoginButton from '@/components/loginbutton';
 import { Auth0Provider } from '@auth0/auth0-react';
-import Link from "next/link";
 
 export default function HomePage() {
   return (
